@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مكة PRO</title>
+<meta name="theme-color" content="#06241b">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap">
+<style>
+:root{--bg1:#06241b;--bg2:#0d4030;--card:#0f3f31;--panel:#0a3025;--line:rgba(212,175,55,.35);--gold:#d4af37;--gold2:#f1d77a;--g1:#f1d77a;--g2:#d4af37;--text:#f5efdc;--muted:#a9c2b6;--warn:#f1d77a;--shadow:0 10px 30px rgba(0,0,0,.35);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root{--bg1:#f4efe2;--bg2:#e6dec8;--card:#fffdf6;--panel:#f3ecda;--line:rgba(154,122,28,.4);--gold:#9a7a1c;--gold2:#7a5f10;--g1:#e6cb6a;--g2:#c3a032;--text:#18312a;--muted:#5a6f66;--warn:#7a5d00;--shadow:0 10px 30px rgba(80,60,10,.15)}}
+*{box-sizing:border-box}
+body{font-family:Cairo,Tahoma,Arial,sans-serif;background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed;color:var(--text);margin:0;padding:12px;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+.card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);padding:16px;border-radius:22px;width:100%;max-width:460px;text-align:center}
+h2{margin:2px 0 0;font-size:26px;font-weight:800;background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2 span{font-size:13px;letter-spacing:2px;border:1px solid var(--gold);border-radius:6px;padding:0 6px;margin-right:6px;vertical-align:middle;-webkit-text-fill-color:var(--gold2)}
+.sub{margin:2px 0 14px;font-size:13px;color:var(--muted)}
+.pick{display:block;border:1.5px dashed var(--gold);color:var(--gold2);padding:14px;border-radius:14px;font-weight:700;cursor:pointer;background:var(--panel)}
+canvas#cv{background:#fff;border:2px solid var(--gold);border-radius:16px;width:100%;height:auto;aspect-ratio:400/320;margin-top:12px;display:block;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.sec{display:flex;align-items:center;gap:10px;margin:20px 2px 0;font-weight:800;font-size:14px;color:var(--gold2)}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{flex:1;min-width:96px;min-height:44px;padding:10px 8px;border:1px solid var(--line);border-radius:12px;font:700 13px Cairo,Tahoma,Arial,sans-serif;cursor:pointer;color:var(--text);background:var(--panel);text-decoration:none;display:flex;align-items:center;justify-content:center;transition:transform .1s,background .15s}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:hover:not(:disabled){background:rgba(212,175,55,.14)}
+.btn.on,.btn-cy,.btn-wa{background:linear-gradient(135deg,var(--g1),var(--g2));color:#06241b;border-color:var(--gold)}
+.btn-gray{color:var(--muted)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.ctl{margin-top:10px;background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:14px;text-align:right}
+.ctl label{display:block;font-weight:700;font-size:13px;color:var(--gold2);margin-bottom:4px}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+input[type=number]{width:88px;padding:7px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--text);font-family:inherit}
+.info{margin-top:12px;font-size:13px;color:var(--muted);text-align:right;line-height:1.8;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.info b{color:var(--text)}
+.warn{color:var(--warn)}
+details.gal{margin-bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:right}
+details.gal summary{cursor:pointer;font-weight:800;font-size:15px;color:var(--gold2)}
+#galBox{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px;font-size:13px;color:var(--muted)}
+.gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;color:var(--text);font:700 12px Cairo,Tahoma,Arial,sans-serif;display:flex;flex-direction:column;gap:6px;align-items:center}
+.gcard canvas,#detC canvas{width:100%;height:auto;background:#fff;border:1px solid var(--gold);border-radius:8px;display:block}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:99;padding:16px}
+#detC{max-height:100%;overflow:auto;text-align:right}
+#detC h3{margin:10px 0 4px;color:var(--gold2)}
+#detC p{margin:4px 0;color:var(--muted);font-size:13px;line-height:1.7}
+</style>
+</head>
+<body>
+<details class="gal" id="galD" style="width:100%;max-width:460px"><summary>🎨 تصميماتي</summary><div id="galBox">جاري التحميل...</div></details>
+<div class="card">
+<h2>مكة للتطريز <span>PRO</span></h2>
+<p class="sub">محاكاة وتعديل ملفات التطريز DST</p>
+<label class="pick">📂 اختر ملف DST<input type="file" id="fileInput" accept=".dst,.DST" hidden></label>
+<canvas id="cv" width="400" height="320"></canvas>
+<div class="btns"><button type="button" class="btn btn-gray" id="bFit">🔍 ملاءمة</button></div>
+<div class="ctl"><label id="vl">تكبير العرض: 1.0×</label><input type="range" id="vz" min="0" max="100" value="0"></div>
+<div class="info" id="info">اختر ملف...<br><small class="warn">💡 اختر وضع الضغط من تحت ثم اضغط على الرسمة. العلامة الخضراء = نقطة الأصل (مكان إبرة الماكينة عند التشغيل).</small></div>
+<div class="sec">المحاكاة</div>
+<div class="btns"><button type="button" class="btn btn-cy" id="bP">▶️ تشغيل</button><button type="button" class="btn btn-gray" id="bS" disabled>⏹ توقيف</button></div>
+<div class="ctl"><label id="sl">سرعة التشغيل</label><input type="range" id="sp" min="0" max="100" value="60"></div>
+<div class="sec">تعديل التصميم</div>
+<div class="btns"><button type="button" class="btn" id="bU" disabled>↶ تراجع</button><button type="button" class="btn" id="bY" disabled>↷ إعادة التراجع</button></div>
+<div class="ctl"><label id="dl">كثافة: 100%</label><input type="range" id="ds" min="20" max="100" value="100"></div>
+<div class="ctl"><label id="zl">حجم التصميم: 100%</label><input type="range" id="zm" min="25" max="300" value="100"><div class="row"><span>العرض</span><input type="number" id="wmm" min="1" step="0.1"><span>الارتفاع</span><input type="number" id="hmm" min="1" step="0.1"><span>مم</span></div></div>
+<div class="btns"><button type="button" class="btn" id="bJ">✂️ حذف القفزات القصيرة</button><button type="button" class="btn" id="bF">◫ إطار</button></div>
+<div class="sec">تدوير ومرآة</div>
+<div class="btns"><button type="button" class="btn" id="bRL">⟲ 90°</button><button type="button" class="btn" id="bRR">⟳ 90°</button><button type="button" class="btn" id="bFx">↔ مرآة أفقية</button><button type="button" class="btn" id="bFy">↕ مرآة رأسية</button></div>
+<div class="ctl"><label id="rl">زاوية: 0°</label><input type="range" id="rt" min="0" max="359" value="0"></div>
+<div class="sec">ترتيب الوقفات</div>
+<div class="ctl" id="stops">اختر ملف أولاً.</div>
+<div class="btns"><button type="button" class="btn btn-gray" id="bO">↺ الترتيب الأصلي</button></div>
+<div class="sec">نقطة البداية</div>
+<div class="btns"><button type="button" class="btn on" id="bM1">الضغط = بداية الخياطة</button><button type="button" class="btn" id="bM2">الضغط = نقطة الأصل</button><button type="button" class="btn" id="bC">⌖ الأصل في المركز</button></div>
+<div class="sec">الحفظ</div>
+<div class="btns"><button type="button" class="btn btn-wa" id="bE">💾 تصدير DST</button><button type="button" class="btn btn-gray" id="bR">↺ إعادة</button></div>
+<div class="sec">تواصل معنا</div>
+<div class="btns" id="ct"></div>
+</div>
+<div id="ov"><div class="card" id="detC"></div></div>
+<script>
+/* ===== بيانات التواصل: عدّلها ببياناتك ===== */
+const CONTACT={wa:'201274810093',tg:'',phone:'+201274810093',email:'makahamza34@gmail.com',fb:'https://facebook.com/Makka1embroidery',brand:'مكة للتطريز بالكمبيوتر'}; /* واتساب: كود الدولة + الرقم بدون صفر ولا + (مصر: 20 ثم الرقم بعد الصفر) | تليجرام: اسم المستخدم بدون @ */
+
+const $=id=>document.getElementById(id);
+const c=$('cv'),x=c.getContext('2d');
+let base=[],cur=[],bnd={mnX:0,mxX:0,mnY:0,mxY:0},raf=null,fname='',cidx=[],ncol=0,colCnt=[],nblk=0,blks=[],bsz={w:0,h:0};
+const PAL=['#0057b7','#d32f2f','#2e7d32','#f9a825','#6a1b9a','#00838f','#ef6c00','#5d4037','#c2185b','#455a64'];
+const S={dens:100,noJ:false,frame:false,start:null,origin:null,scale:1,mode:'seq',mark:null,note:'',order:null,hl:null,rot:0,fx:false,fy:false};
+const V={z:1,x:0,y:0};
+let undo=[],redo=[],gs=null;
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+
+/* عدد الألوان = مجموعات الغرز اللي بينها تغيير لون */
+function colorize(l){
+  const idx=new Array(l.length);let k=0,seen=false,pend=false;colCnt=[];
+  for(let i=0;i<l.length;i++){
+    const p=l[i];
+    if(p.type==='color')pend=true;
+    else if(p.type==='stitch'){if(pend&&seen)k++;pend=false;seen=true;colCnt[k]=(colCnt[k]||0)+1;}
+    idx[i]=k;
+  }
+  cidx=idx;ncol=seen?k+1:0;
+}
+function legend(){
+  if(!ncol)return '';
+  const sw=colCnt.slice(0,16).map((n,k)=>`<span style="display:inline-flex;align-items:center;gap:4px;margin:2px 0 2px 10px"><i style="width:12px;height:12px;border-radius:3px;background:${PAL[k%PAL.length]}"></i>${k+1}: ${n}</span>`).join('');
+  return `<br>${sw}${ncol>16?` +${ncol-16}`:''}<br><small>ألوان العرض للتمييز فقط، ملف DST مبيحفظش ألوان الخيوط.</small>`;
+}
+/* ---------- التراجع ---------- */
+const snap=()=>({rot:S.rot,fx:S.fx,fy:S.fy,order:S.order&&[...S.order],dens:S.dens,noJ:S.noJ,frame:S.frame,scale:S.scale,start:S.start&&{...S.start},origin:S.origin&&{...S.origin}});
+const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+function pushUndo(b){undo.push(b);if(undo.length>100)undo.shift();redo=[];}
+function gbegin(){if(!gs)gs=snap();}
+function gend(){if(!gs)return;const b=gs;gs=null;if(!same(b,snap()))pushUndo(b);updHist();}
+function edit(fn){gend();const b=snap();fn();if(!same(b,snap()))pushUndo(b);updHist();}
+function restore(sn){
+  S.rot=sn.rot;S.fx=sn.fx;S.fy=sn.fy;S.order=sn.order&&[...sn.order];S.hl=null;S.dens=sn.dens;S.noJ=sn.noJ;S.frame=sn.frame;S.scale=sn.scale;S.start=sn.start&&{...sn.start};S.origin=sn.origin&&{...sn.origin};
+  $('ds').value=S.dens;$('dl').textContent=`كثافة: ${S.dens}%`;recompute();
+}
+function undoIt(){gend();if(!undo.length)return;redo.push(snap());restore(undo.pop());}
+function redoIt(){gend();if(!redo.length)return;undo.push(snap());restore(redo.pop());}
+function updHist(){
+  $('bU').disabled=!undo.length;$('bY').disabled=!redo.length;
+  $('bU').textContent='↶ تراجع'+(undo.length?` (${undo.length})`:'');
+}
+/* مقاس التصميم الحقيقي = صندوق الغرز بس */
+function sbox(l){let a=Infinity,b=-Infinity,e=Infinity,f=-Infinity;for(const p of l)if(p.type==='stitch'){a=Math.min(a,p.x);b=Math.max(b,p.x);e=Math.min(e,p.y);f=Math.max(f,p.y);}return a===Infinity?{w:0,h:0}:{w:b-a,h:f-e};}
+function getO(){return S.origin?{x:Math.round(S.origin.x*S.scale),y:Math.round(S.origin.y*S.scale)}:{x:0,y:0};}
+function scaled(l){
+  const k=S.scale;if(k===1)return l;
+  const out=[];let lx=null,ly=null;
+  for(const p of l){const X2=Math.round(p.x*k),Y2=Math.round(p.y*k);
+    if(p.type==='stitch'&&X2===lx&&Y2===ly)continue;
+    out.push({x:X2,y:Y2,type:p.type});lx=X2;ly=Y2;}
+  return out;
+}
+function updSize(){
+  $('zl').textContent=`حجم التصميم: ${Math.round(S.scale*100)}%`;$('zm').value=Math.round(S.scale*100);
+  $('wmm').value=(bsz.w*S.scale/10).toFixed(1);$('hmm').value=(bsz.h*S.scale/10).toFixed(1);
+}
+function setScale(k){S.scale=Math.min(3,Math.max(0.25,k));if(base.length)recompute();else updSize();}
+function bounds(l){
+  let mnX=0,mxX=0,mnY=0,mxY=0;
+  for(const p of l){mnX=Math.min(mnX,p.x);mxX=Math.max(mxX,p.x);mnY=Math.min(mnY,p.y);mxY=Math.max(mxY,p.y);}
+  return{mnX,mxX,mnY,mxY};
+}
+
+/* ---------- قراءة DST ---------- */
+function dstPts(buf){
+  const b=new Uint8Array(buf);let X=0,Y=0;const pts=[];
+  for(let i=512;i+2<b.length;i+=3){
+    const b0=b[i],b1=b[i+1],b2=b[i+2];
+    if((b2&0xF3)===0xF3)break;
+    let dx=0,dy=0;
+    if(b0&0x01)dx+=1;  if(b0&0x02)dx-=1;
+    if(b0&0x04)dx+=9;  if(b0&0x08)dx-=9;
+    if(b1&0x01)dx+=3;  if(b1&0x02)dx-=3;
+    if(b1&0x04)dx+=27; if(b1&0x08)dx-=27;
+    if(b2&0x04)dx+=81; if(b2&0x08)dx-=81;
+    if(b0&0x80)dy+=1;  if(b0&0x40)dy-=1;
+    if(b0&0x20)dy+=9;  if(b0&0x10)dy-=9;
+    if(b1&0x80)dy+=3;  if(b1&0x40)dy-=3;
+    if(b1&0x20)dy+=27; if(b1&0x10)dy-=27;
+    if(b2&0x20)dy+=81; if(b2&0x10)dy-=81;
+    X+=dx;Y-=dy;
+    pts.push({x:X,y:Y,type:(b2&0xC3)===0xC3?'color':(b2&0x83)===0x83?'jump':'stitch'});
+  }
+  return pts;
+}
+function parse(buf,name){
+  if(buf.byteLength<515){$('info').textContent='الملف صغير أو تالف، اختر ملف DST صالح.';return;}
+  const pts=dstPts(buf);
+  if(!pts.length){$('info').textContent='مفيش غرز في الملف ده.';return;}
+  base=pts;bsz=sbox(pts);fname=name;undo=[];redo=[];gs=null;
+  resetState();recompute();
+}
+
+/* ---------- ترتيب الوقفات ---------- */
+function splitBlocks(l){
+  const out=[];let cu=[],has=false;
+  for(const p of l){
+    if(p.type==='color'){if(has){out.push(cu);cu=[];has=false;}continue;}
+    cu.push(p);if(p.type==='stitch')has=true;
+  }
+  if(has)out.push(cu);
+  return out;
+}
+function joinBlocks(bl,ord){
+  const out=[];let lx=0,ly=0;
+  ord.forEach((k,n)=>{
+    const b=bl[k];
+    if(n>0)out.push({x:lx,y:ly,type:'color'});
+    if(b[0].type==='stitch'&&(b[0].x!==lx||b[0].y!==ly))out.push({x:b[0].x,y:b[0].y,type:'jump'});
+    for(const p of b)out.push(p);
+    const e=b[b.length-1];lx=e.x;ly=e.y;
+  });
+  return out;
+}
+function moveStop(p,d){
+  edit(()=>{
+    const o=(S.order||blks.map((_,i)=>i)).slice();
+    [o[p],o[p+d]]=[o[p+d],o[p]];
+    S.order=o.every((v,i)=>v===i)?null:o;
+    S.hl=p+d;recompute();
+  });
+}
+function renderStops(){
+  const el=$('stops');
+  if(!base.length){el.textContent='اختر ملف أولاً.';return;}
+  if(nblk<2){el.textContent='التصميم فيه وقفة واحدة، مفيش ترتيب يتغير.';return;}
+  const ord=S.order||blks.map((_,i)=>i);
+  el.innerHTML='';
+  ord.forEach((k,p)=>{
+    const n=blks[k].filter(q=>q.type==='stitch').length;
+    const r=document.createElement('div');r.className='row';
+    r.style.cssText='justify-content:space-between;margin-top:6px;'+(S.hl===p?'outline:2px solid var(--gold2);border-radius:10px;padding:2px 4px;':'');
+    const t=document.createElement('span');
+    t.style.cssText='flex:1;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text)';
+    t.innerHTML=`<i style="width:14px;height:14px;border-radius:3px;background:${PAL[p%PAL.length]}"></i>وقفة ${p+1}: ${n} غرزة`+(k!==p?` <small>(كانت ${k+1})</small>`:'');
+    t.onclick=()=>{S.hl=S.hl===p?null:p;renderStops();draw();};
+    const mk=(txt,d,dis)=>{const b=document.createElement('button');b.type='button';b.className='btn';b.style.cssText='flex:none;min-width:44px;';b.textContent=txt;b.disabled=dis;b.onclick=()=>moveStop(p,d);return b;};
+    r.append(t,mk('▲',-1,p===0),mk('▼',1,p===ord.length-1));
+    el.appendChild(r);
+  });
+}
+
+/* ---------- المعالجة (دايماً من الأصل) ---------- */
+function rotate(l,pt){
+  let best=-1,bd=Infinity;
+  l.forEach((p,i)=>{if(p.type!=='stitch')return;const d=(p.x-pt.x)**2+(p.y-pt.y)**2;if(d<bd){bd=d;best=i;}});
+  if(best<0)return l;
+  let a=best;while(a>0&&l[a].type==='stitch')a--;
+  let e=best+1;while(e<l.length&&l[e].type==='stitch')e++;
+  const run=l.slice(a,e),rel=best-a;
+  S.mark={x:l[best].x,y:l[best].y};
+  if(rel===0)return l;
+  if(dist(run[0],run[run.length-1])>10){S.note='المسار ده مش مقفول، تغيير بدايته هيبوّظ الشكل، فاتساب زي ما هو.';S.mark=null;return l;}
+  const cyc=run.slice(0,-1),rot=cyc.slice(rel).concat(cyc.slice(0,rel));
+  rot.push({...rot[0]});
+  const res=rot.map((p,i)=>({x:p.x,y:p.y,type:i===0?run[0].type:'stitch'}));
+  return l.slice(0,a).concat(res,l.slice(e));
+}
+function recompute(){
+  halt();S.note='';S.mark=null;
+  bsz=sbox(xform(base));let l=xform(scaled(base));
+  blks=splitBlocks(l);nblk=blks.length;
+  if(S.order&&S.order.length!==nblk)S.order=null;
+  if(S.order)l=joinBlocks(blks,S.order);
+  const d=S.dens/100;let acc=0;
+  l=l.filter(p=>{if(p.type!=='stitch')return true;acc+=d;if(acc>=1){acc-=1;return true;}return false;});
+  if(S.noJ){let prev=null;l=l.map(p=>{let r=p;if(p.type==='jump'&&prev&&dist(p,prev)<70)r={x:p.x,y:p.y,type:'stitch'};prev=p;return r;});}
+  if(S.start)l=rotate(l,{x:S.start.x*S.scale,y:S.start.y*S.scale});
+  if(S.frame){
+    const bb=bounds(l),pd=20,x0=bb.mnX-pd,x1=bb.mxX+pd,y0=bb.mnY-pd,y1=bb.mxY+pd;
+    l=l.concat([{x:x0,y:y0,type:'jump'},{x:x1,y:y0,type:'stitch'},{x:x1,y:y1,type:'stitch'},{x:x0,y:y1,type:'stitch'},{x:x0,y:y0,type:'stitch'}]);
+  }
+  cur=l;bnd=bounds(cur);colorize(cur);const sb=sbox(cur);
+  const st=cur.filter(p=>p.type==='stitch').length,jm=cur.filter(p=>p.type==='jump').length;
+  $('info').innerHTML=`<b>${fname}</b><br>الغرز: ${base.filter(p=>p.type==='stitch').length} ← ${st} | القفزات: ${jm}<br>الأبعاد: ${(sb.w/10).toFixed(1)}×${(sb.h/10).toFixed(1)} مم<br>عدد الألوان: <b>${ncol}</b>${legend()}`+(S.note?`<br><small class="warn">${S.note}</small>`:'');
+  $('bJ').classList.toggle('on',S.noJ);$('bF').classList.toggle('on',S.frame);
+  $('rt').value=S.rot;$('rl').textContent=`زاوية: ${S.rot}°`;$('bFx').classList.toggle('on',S.fx);$('bFy').classList.toggle('on',S.fy);renderStops();updSp();updMode();updSize();updZ();updHist();draw();
+}
+
+/* ---------- الرسم والتكبير ---------- */
+function tr(){
+  const w=bnd.mxX-bnd.mnX||1,h=bnd.mxY-bnd.mnY||1;
+  const sc=Math.min((c.width-40)/w,(c.height-40)/h);
+  const ox=-bnd.mnX*sc+(c.width-w*sc)/2,oy=-bnd.mnY*sc+(c.height-h*sc)/2;
+  return{sc:sc*V.z,ox:(ox-c.width/2)*V.z+c.width/2+V.x,oy:(oy-c.height/2)*V.z+c.height/2+V.y};
+}
+function updZ(){
+  $('vl').textContent=`تكبير العرض: ${V.z.toFixed(1)}×`;
+  $('vz').value=Math.round(100*Math.log(V.z)/Math.log(60));
+  c.style.touchAction=V.z>1.001?'none':'auto';
+}
+function zoomAt(cx,cy,nz){
+  nz=Math.min(60,Math.max(1,nz));
+  V.x=cx-c.width/2-(cx-c.width/2-V.x)*nz/V.z;V.y=cy-c.height/2-(cy-c.height/2-V.y)*nz/V.z;
+  V.z=nz;if(nz<=1.001){V.z=1;V.x=0;V.y=0;}
+  updZ();schedDraw();
+}
+let sd=false;
+function schedDraw(){if(sd)return;sd=true;requestAnimationFrame(()=>{sd=false;halt();draw();});}
+function draw(up=cur.length){
+  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+  if(!cur.length)return;
+  const t=tr();let cc=0,lx=0,ly=0,on=false;
+  x.strokeStyle=PAL[0];x.lineWidth=1.2;x.beginPath();
+  for(let i=0;i<up&&i<cur.length;i++){
+    const s=cur[i],px=s.x*t.sc+t.ox,py=s.y*t.sc+t.oy;
+    if(s.type!=='stitch'){x.stroke();x.beginPath();x.moveTo(px,py);on=true;}
+    else{
+      if(cidx[i]!==cc){x.stroke();cc=cidx[i];x.strokeStyle=PAL[cc%PAL.length];x.beginPath();x.moveTo(lx,ly);on=true;}
+      if(!on){x.moveTo(px,py);on=true;}else x.lineTo(px,py);
+    }
+    lx=px;ly=py;
+  }
+  x.stroke();
+  if(S.hl!==null&&up>=cur.length){
+    x.strokeStyle='#e91e63';x.lineWidth=3;x.beginPath();let pp=null;
+    for(let i=0;i<cur.length;i++){const s=cur[i],X=s.x*t.sc+t.ox,Y=s.y*t.sc+t.oy;if(s.type==='stitch'&&pp&&cidx[i]===S.hl){x.moveTo(pp.x,pp.y);x.lineTo(X,Y);}pp={x:X,y:Y};}
+    x.stroke();
+  }
+  if(S.mark&&up>=cur.length){x.fillStyle='red';x.beginPath();x.arc(S.mark.x*t.sc+t.ox,S.mark.y*t.sc+t.oy,5,0,6.28);x.fill();}
+  if(up>=cur.length){const o=getO(),ox=o.x*t.sc+t.ox,oy=o.y*t.sc+t.oy;x.strokeStyle='#1d9e4f';x.lineWidth=2;x.beginPath();x.moveTo(ox-9,oy);x.lineTo(ox+9,oy);x.moveTo(ox,oy-9);x.lineTo(ox,oy+9);x.stroke();x.beginPath();x.arc(ox,oy,6,0,6.28);x.stroke();}
+}
+/* ---------- التشغيل ---------- */
+function rate(){return Math.round(10*Math.pow(10,(+$('sp').value)/100*3.5));}
+function updSp(){const r=rate();$('sl').textContent=`سرعة التشغيل: ${r} غرزة/ثانية`+(cur.length?` (≈ ${Math.max(1,Math.round(cur.length/r))} ثانية)`:'');}
+function updMode(){$('bM1').classList.toggle('on',S.mode==='seq');$('bM2').classList.toggle('on',S.mode==='org');}
+const P={on:false,i:0,pos:0,pv:null,last:0,c:0};
+function setBtns(){$('bP').disabled=P.on;$('bS').disabled=!P.on;}
+function stop(){if(raf)cancelAnimationFrame(raf);raf=null;P.on=false;setBtns();}
+function halt(){stop();P.i=0;P.pos=0;P.pv=null;P.c=0;}
+function play(){
+  if(!cur.length||P.on)return;
+  if(P.i===0||P.i>=cur.length){P.i=0;P.pos=0;P.pv=null;P.c=0;x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);}
+  const t=tr();x.strokeStyle=PAL[P.c%PAL.length];x.lineWidth=1.2;
+  P.on=true;P.last=performance.now();setBtns();
+  const step=now=>{
+    P.pos+=(now-P.last)/1000*rate();P.last=now;
+    const end=Math.min(Math.floor(P.pos),cur.length);
+    x.beginPath();if(P.pv)x.moveTo(P.pv.x,P.pv.y);
+    for(;P.i<end;P.i++){
+      const s=cur[P.i],X=s.x*t.sc+t.ox,Y=s.y*t.sc+t.oy;
+      if(s.type==='stitch'&&cidx[P.i]!==P.c){x.stroke();P.c=cidx[P.i];x.strokeStyle=PAL[P.c%PAL.length];x.beginPath();if(P.pv)x.moveTo(P.pv.x,P.pv.y);}
+      if(s.type!=='stitch'||!P.pv)x.moveTo(X,Y);else x.lineTo(X,Y);
+      P.pv={x:X,y:Y};
+    }
+    x.stroke();
+    if(end>=cur.length){raf=null;P.on=false;P.i=0;P.pos=0;P.pv=null;setBtns();draw();return;}
+    raf=requestAnimationFrame(step);
+  };
+  raf=requestAnimationFrame(step);
+}
+
+/* ---------- تصدير DST ---------- */
+const XB=[[0,1,2],[1,1,2],[0,4,8],[1,4,8],[2,4,8]];
+const YB=[[0,0x80,0x40],[1,0x80,0x40],[0,0x20,0x10],[1,0x20,0x10],[2,0x20,0x10]];
+function tri(v){const d=[];for(let k=0;k<5;k++){const r=((v%3)+3)%3;if(r===2){d.push(-1);v=(v+1)/3;}else{d.push(r);v=(v-r)/3;}}return d;}
+function enc(dx,dy,f){
+  const b=[0,0,3|f],xd=tri(dx),yd=tri(dy);
+  for(let k=0;k<5;k++){
+    if(xd[k]===1)b[XB[k][0]]|=XB[k][1];if(xd[k]===-1)b[XB[k][0]]|=XB[k][2];
+    if(yd[k]===1)b[YB[k][0]]|=YB[k][1];if(yd[k]===-1)b[YB[k][0]]|=YB[k][2];
+  }
+  return b;
+}
+function exportDST(){
+  if(!cur.length)return alert('مفيش تصميم');
+  const O=getO(),moved=O.x!==0||O.y!==0;const out=[];let px=O.x,py=O.y,cc=0,mnx=0,mxx=0,mny=0,mxy=0,first=true;
+  for(const p of cur){
+    let f=p.type==='jump'?0x80:p.type==='color'?0xC0:0;if(f===0xC0)cc++;if(first&&moved&&f===0)f=0x80;first=false;
+    const tx=p.x-px,ty=-(p.y-py);
+    const n=Math.max(1,Math.ceil(Math.max(Math.abs(tx),Math.abs(ty))/121));
+    let sx=0,sy=0;
+    for(let i=1;i<=n;i++){const nx=Math.round(tx*i/n),ny=Math.round(ty*i/n);out.push(...enc(nx-sx,ny-sy,f));sx=nx;sy=ny;}
+    px=p.x;py=p.y;const rx=p.x-O.x,ry=p.y-O.y;mnx=Math.min(mnx,rx);mxx=Math.max(mxx,rx);mny=Math.min(mny,ry);mxy=Math.max(mxy,ry);
+  }
+  out.push(0,0,0xF3);const cnt=out.length/3;out.push(0x1A);
+  const nm=(fname.replace(/\.dst$/i,'').replace(/[^\x20-\x7E]/g,'')||'MAKKA').slice(0,16).padEnd(16,' ');
+  const pad=(v,n)=>String(v).padStart(n,' ');
+  const hs=`LA:${nm}\rST:${pad(cnt,7)}\rCO:${pad(cc,3)}\r+X:${pad(mxx,5)}\r-X:${pad(-mnx,5)}\r+Y:${pad(-mny,5)}\r-Y:${pad(mxy,5)}\rAX:+${pad(0,5)}\rAY:+${pad(0,5)}\rMX:+${pad(0,5)}\rMY:+${pad(0,5)}\rPD:******\r\x1A`;
+  const head=new Uint8Array(512).fill(32);
+  for(let i=0;i<hs.length&&i<512;i++)head[i]=hs.charCodeAt(i);
+  const blob=new Blob([head,new Uint8Array(out)],{type:'application/octet-stream'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='makka_export.dst';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+/* ---------- معرض تصميماتي ---------- */
+const GAL='designs/';let galLoaded=false;
+function thumb(buf,w,h){
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);
+  const pts=dstPts(buf),bx=sbox(pts);let a=Infinity,e=Infinity;
+  for(const p of pts)if(p.type==='stitch'){a=Math.min(a,p.x);e=Math.min(e,p.y);}
+  if(a===Infinity)return cv;
+  const sc=Math.min((w-12)/(bx.w||1),(h-12)/(bx.h||1));
+  const ox=(w-bx.w*sc)/2-a*sc,oy=(h-bx.h*sc)/2-e*sc;
+  let k=0,pend=false,seen=false,px=null,py=null;g.lineWidth=.8;
+  for(const p of pts){
+    const X=p.x*sc+ox,Y=p.y*sc+oy;
+    if(p.type==='color')pend=true;
+    else if(p.type==='stitch'){
+      if(pend&&seen)k++;pend=false;seen=true;
+      if(px!==null){g.strokeStyle=PAL[k%PAL.length];g.beginPath();g.moveTo(px,py);g.lineTo(X,Y);g.stroke();}
+    }
+    px=X;py=Y;
+  }
+  return cv;
+}
+async function loadGallery(){
+  const box=$('galBox');
+  try{
+    const r=await fetch(GAL+'list.json');if(!r.ok)throw 0;
+    const list=await r.json();box.innerHTML='';
+    if(!list.length){box.textContent='المعرض فاضي. أضف تصاميم في designs/list.json';return;}
+    for(const it of list){
+      const card=document.createElement('button');card.type='button';card.className='gcard';
+      const cap=document.createElement('span');cap.textContent=it.name||it.file;
+      card.append(cap);box.appendChild(card);card.onclick=()=>showDet(it);
+      fetch(GAL+encodeURIComponent(it.file)).then(r=>r.arrayBuffer()).then(buf=>card.prepend(thumb(buf,120,90))).catch(()=>{});
+    }
+    galLoaded=true;
+  }catch(_){box.textContent='مقدرتش أحمّل المعرض. اتأكد من ملف designs/list.json.';}
+}
+async function openGal(it){
+  try{
+    const r=await fetch(GAL+encodeURIComponent(it.file));if(!r.ok)throw 0;
+    parse(await r.arrayBuffer(),it.file);
+    $('galD').open=false;c.scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(_){alert('مقدرتش أفتح الملف.');}
+}
+async function showDet(it){
+  const ov=$('ov'),box=$('detC');ov.style.display='flex';box.textContent='جاري التحميل...';
+  try{
+    const r=await fetch(GAL+encodeURIComponent(it.file));if(!r.ok)throw 0;
+    const buf=await r.arrayBuffer(),pts=dstPts(buf),bx=sbox(pts);
+    let ns=0,nc=0,pend=false,seen=false;
+    for(const p of pts){if(p.type==='color')pend=true;else if(p.type==='stitch'){ns++;if(pend&&seen)nc++;pend=false;seen=true;}}
+    box.innerHTML='';
+    const mk=(tag,txt,cls)=>{const el=document.createElement(tag);el.textContent=txt;el.className='btn '+cls;if(tag==='a'){el.target='_blank';el.rel='noopener';}else el.type='button';return el;};
+    const cl=mk('button','✕ إغلاق','btn-gray');cl.style.cssText='flex:none;width:100%;margin-bottom:8px';cl.onclick=()=>{ov.style.display='none';};
+    const h=document.createElement('h3');h.textContent=it.name||it.file;
+    box.append(cl,thumb(buf,360,270),h);
+    if(it.desc){const d=document.createElement('p');d.textContent=it.desc;box.appendChild(d);}
+    const info=document.createElement('div');info.className='info';
+    const row=(l,v)=>{const s=document.createElement('div'),b=document.createElement('b');b.textContent=l+': ';s.append(b,v);info.appendChild(s);};
+    if(it.price)row('السعر',it.price);
+    row('عدد الغرز',ns.toLocaleString('en'));
+    row('الأبعاد',(bx.w/10).toFixed(1)+' × '+(bx.h/10).toFixed(1)+' مم');
+    row('عدد الوقفات (الألوان)',String(seen?nc+1:0));
+    box.appendChild(info);
+    const msg=CONTACT.brand+': مهتم بالتصميم "'+(it.name||it.file)+'"';
+    const bt=document.createElement('div');bt.className='btns';
+    const wa=mk('a','💬 واتساب','btn-wa');wa.href='https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(msg);
+    const tg=CONTACT.tg?mk('a','✈️ تليجرام','btn-wa'):null;if(tg)tg.href='https://t.me/'+CONTACT.tg;
+    const op=mk('button','▶ افتح في المحاكي','');op.onclick=()=>{ov.style.display='none';openGal(it);};
+    bt.append(wa);if(tg)bt.append(tg);bt.append(op);box.appendChild(bt);
+  }catch(_){box.textContent='مقدرتش أفتح التصميم.';}
+}
+$('ov').addEventListener('click',e=>{if(e.target===$('ov'))$('ov').style.display='none';});
+$('galD').addEventListener('toggle',()=>{if($('galD').open&&!galLoaded)loadGallery();});
+
+/* ---------- الأحداث ---------- */
+function resetState(){
+  S.rot=0;S.fx=false;S.fy=false;S.order=null;S.hl=null;S.dens=100;S.noJ=false;S.frame=false;S.start=null;S.origin=null;S.scale=1;S.mode='seq';V.z=1;V.x=0;V.y=0;
+  $('ds').value=100;$('dl').textContent='كثافة: 100%';
+}
+$('fileInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>parse(ev.target.result,f.name);
+  r.onerror=()=>{$('info').textContent='مقدرتش أقرأ الملف، جرّب تاني.';};
+  r.readAsArrayBuffer(f);e.target.value='';
+});
+$('ds').addEventListener('change',gend);
+$('zm').addEventListener('change',gend);
+$('ds').addEventListener('input',e=>{gbegin();S.dens=+e.target.value;$('dl').textContent=`كثافة: ${S.dens}%`;if(base.length)recompute();});
+$('bJ').addEventListener('click',()=>{if(!base.length)return;edit(()=>{S.noJ=!S.noJ;recompute();});});
+$('bF').addEventListener('click',()=>{if(!base.length)return;edit(()=>{S.frame=!S.frame;recompute();});});
+$('sp').addEventListener('input',updSp);
+$('zm').addEventListener('input',e=>{gbegin();setScale(+e.target.value/100);});
+$('wmm').addEventListener('change',e=>edit(()=>{if(bsz.w&&+e.target.value>0)setScale(+e.target.value*10/bsz.w);else updSize();}));
+$('hmm').addEventListener('change',e=>edit(()=>{if(bsz.h&&+e.target.value>0)setScale(+e.target.value*10/bsz.h);else updSize();}));
+$('bM1').addEventListener('click',()=>{S.mode='seq';updMode();});
+$('bM2').addEventListener('click',()=>{S.mode='org';updMode();});
+$('bC').addEventListener('click',()=>{if(!cur.length)return;edit(()=>{S.origin={x:(bnd.mnX+bnd.mxX)/2/S.scale,y:(bnd.mnY+bnd.mxY)/2/S.scale};S.mode='org';recompute();});});
+$('bO').addEventListener('click',()=>{if(!S.order)return;edit(()=>{S.order=null;S.hl=null;recompute();});});
+$('bU').addEventListener('click',undoIt);
+$('bY').addEventListener('click',redoIt);
+document.addEventListener('keydown',e=>{
+  if(!(e.ctrlKey||e.metaKey)||(e.target.type==='number'))return;
+  const k=e.key.toLowerCase();
+  if(k==='z'&&!e.shiftKey){e.preventDefault();undoIt();}else if(k==='y'||(k==='z'&&e.shiftKey)){e.preventDefault();redoIt();}
+});
+$('bP').addEventListener('click',play);
+$('bS').addEventListener('click',stop);
+$('bE').addEventListener('click',exportDST);
+$('bR').addEventListener('click',()=>{if(!base.length)return;edit(()=>{resetState();recompute();});});
+let drag=null,dragged=false;
+c.addEventListener('pointerdown',e=>{dragged=false;drag={x:e.clientX,y:e.clientY,vx:V.x,vy:V.y,m:false};try{c.setPointerCapture(e.pointerId);}catch(_){}});
+c.addEventListener('pointermove',e=>{
+  if(!drag||V.z<=1.001)return;
+  const r=c.getBoundingClientRect(),k=c.width/r.width,dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.m&&Math.hypot(dx,dy)<5)return;
+  drag.m=true;V.x=drag.vx+dx*k;V.y=drag.vy+dy*k;schedDraw();
+});
+c.addEventListener('pointerup',()=>{dragged=!!(drag&&drag.m);drag=null;});
+c.addEventListener('pointercancel',()=>{drag=null;});
+c.addEventListener('wheel',e=>{
+  e.preventDefault();const r=c.getBoundingClientRect();
+  zoomAt((e.clientX-r.left)*(c.width/r.width),(e.clientY-r.top)*(c.height/r.height),V.z*(e.deltaY<0?1.25:.8));
+},{passive:false});
+$('vz').addEventListener('input',e=>zoomAt(c.width/2,c.height/2,Math.pow(60,+e.target.value/100)));
+$('bFit').addEventListener('click',()=>{V.z=1;V.x=0;V.y=0;updZ();halt();draw();});
+c.addEventListener('click',e=>{
+  if(dragged){dragged=false;return;}
+  if(!cur.length)return;stop();
+  const r=c.getBoundingClientRect(),t=tr();
+  const cx=(e.clientX-r.left)*(c.width/r.width),cy=(e.clientY-r.top)*(c.height/r.height);
+  const pt={x:(cx-t.ox)/t.sc,y:(cy-t.oy)/t.sc};
+  edit(()=>{if(S.mode==='org')S.origin={x:pt.x/S.scale,y:pt.y/S.scale};else S.start={x:pt.x/S.scale,y:pt.y/S.scale};recompute();});
+});
+/* ---------- تدوير ومرآة ---------- */
+function xform(l){
+  if(!S.rot&&!S.fx&&!S.fy)return l;
+  const a=S.rot*Math.PI/180,co=Math.cos(a),si=Math.sin(a);
+  return l.map(p=>{const X=S.fx?-p.x:p.x,Y=S.fy?-p.y:p.y;return{x:Math.round(X*co-Y*si),y:Math.round(X*si+Y*co),type:p.type};});
+}
+function setXf(fn){if(!base.length)return;edit(()=>{fn();S.start=null;S.origin=null;recompute();});}
+$('bRL').addEventListener('click',()=>setXf(()=>{S.rot=(S.rot+270)%360;}));
+$('bRR').addEventListener('click',()=>setXf(()=>{S.rot=(S.rot+90)%360;}));
+$('bFx').addEventListener('click',()=>setXf(()=>{S.fx=!S.fx;}));
+$('bFy').addEventListener('click',()=>setXf(()=>{S.fy=!S.fy;}));
+$('rt').addEventListener('input',e=>{if(!base.length)return;gbegin();S.rot=+e.target.value;S.start=null;S.origin=null;recompute();});
+$('rt').addEventListener('change',gend);
+/* ---------- تواصل معنا ---------- */
+(()=>{
+  const box=$('ct'),L=[];
+  if(CONTACT.wa)L.push(['💬 واتساب','https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(CONTACT.brand+': عندي استفسار')]);
+  if(CONTACT.tg)L.push(['✈️ تليجرام','https://t.me/'+CONTACT.tg]);
+  if(CONTACT.phone)L.push(['📞 اتصال','tel:'+CONTACT.phone]);
+  if(CONTACT.email)L.push(['✉️ إيميل','mailto:'+CONTACT.email]);
+  if(CONTACT.fb)L.push(['📘 فيسبوك',CONTACT.fb]);
+  for(const [t,h] of L){const a=document.createElement('a');a.className='btn btn-wa';a.textContent=t;a.href=h;if(h.startsWith('http')){a.target='_blank';a.rel='noopener';}box.appendChild(a);}
+  const sh=document.createElement('button');sh.type='button';sh.className='btn';sh.textContent='🔗 شارك التطبيق';
+  sh.onclick=async()=>{
+    const d={title:CONTACT.brand,text:CONTACT.brand+' - محاكاة وتعديل ملفات DST',url:location.href.split('#')[0]};
+    try{if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(d.url);alert('اتنسخ الرابط');}}catch(_){}
+  };
+  box.appendChild(sh);
+})();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
+</script>
+</body>
+</html>
